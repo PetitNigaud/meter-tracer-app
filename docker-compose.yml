@@ -1,0 +1,35 @@
+version: "3.10"
+
+volumes:
+  easyocr_models:
+
+services:
+  jupyter:
+    build:
+      context: ./jupyter
+      dockerfile: Dockerfile
+#    runtime: nvidia
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: all
+#              capabilities: [gpu]
+    ports:
+      - "8888:8888"
+    user: root
+    environment:
+      - CHOWN_HOME=yes
+      - CHOWN_HOME_OPTS=-R
+      - CHOWN_EXTRA=/EASYOCR
+      - EASYOCR_MODULE_PATH=/EASYOCR
+    volumes:
+      # mount project root dir for access to .git inside jupyter
+      - ./:/home/jovyan
+      # store models here, so they are not downloaded only once
+      - easyocr_models:/EASYOCR
+    command: 
+    - "start-notebook.sh"
+    - "--NotebookApp.token="
+    - "--notebook-dir=/home/jovyan/jupyter/"
