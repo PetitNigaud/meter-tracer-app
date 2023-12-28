@@ -4,6 +4,22 @@ volumes:
   easyocr_models:
 
 services:
+  nginx:
+    build: 
+      context: ./nginx/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - taipy
+  taipy:
+    build: 
+      context: taipy
+#    ports:
+#      - "9090:9090"
+    command: python main.py
   jupyter:
     build:
       context: ./jupyter
@@ -25,8 +41,10 @@ services:
       - CHOWN_EXTRA=/EASYOCR
       - EASYOCR_MODULE_PATH=/EASYOCR
     volumes:
-      # mount project root dir for access to .git inside jupyter
-      - ./:/home/jovyan
+      # EITHER mount project root dir for access to .git inside jupyter
+      #- ./:/home/jovyan
+      # OR only mount notebook folder
+      - ./jupyter/notebooks:/home/jovyan/jupyter/notebooks
       # store models here, so they are not downloaded only once
       - easyocr_models:/EASYOCR
     command: 
