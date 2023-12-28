@@ -1,0 +1,3 @@
+[submodule "taipy"]
+	path = taipy
+	url = https://github.com/Avaiga/demo-face-recognition.git
